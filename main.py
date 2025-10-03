@@ -44,3 +44,19 @@ titulo = input("Digite o titulo do livro: ").lower().strip()
 autor = input("Digite o autor do livro: ").lower().strip()
 ano = int(input("Digite o ano de publicação do livro: ").strip())
 cadastra_livro(titulo, autor, ano)
+
+
+def lista_livros():
+    try:
+        conexao = sqlite3.connect('biblioteca.db')
+        cursor = conexao.cursor()
+
+        cursor.execute("SELECT * FROM livros")
+        for livro in cursor.fetchall():
+            print(f"ID: {livro[0]}, Título: {livro[1]}, Autor: {livro[2]}, Ano: {livro[3]}, Disponível: {livro[4]}")
+    except sqlite3.Error as error:
+        print("Erro ao listar livros:", error)
+    finally:
+        if conexao:
+            conexao.close()
+lista_livros()
