@@ -60,3 +60,29 @@ def lista_livros():
         if conexao:
             conexao.close()
 lista_livros()
+
+
+def uptade_disponibilidade():
+    try:
+        conexao = sqlite3.connect('biblioteca.db')
+        cursor = conexao.cursor()
+
+        id_livro = int(input("Digite o ID do livro que deseja atualizar a disponibilidade: ").strip())
+        nova_disponibilidade = input("Digite a nova disponibilidade (sim/não): ").lower().strip()
+
+        cursor.execute("""
+        UPDATE livros SET disponivel = ? WHERE id = ?
+        """, (nova_disponibilidade, id_livro))
+
+        conexao.commit()
+        if cursor.rowcount > 0:
+            print("Disponibilidade atualizada com sucesso!")
+        else:
+            print("Nenhum livro encontrado com o ID fornecido.")
+    except sqlite3.Error as error:
+        print("Erro ao atualizar disponibilidade:", error)
+    finally:
+        if conexao:
+            conexao.close()
+
+uptade_disponibilidade()
