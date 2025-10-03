@@ -15,11 +15,17 @@ CREATE TABLE IF NOT EXISTS livros (
     )
 """)
 
-def cadastra_livro(titulo, autor, ano):
+
+def cadastra_livro():
     try:
         conexao = sqlite3.connect('biblioteca.db')
         cursor = conexao.cursor()
         
+        titulo = input("Digite o titulo do livro: ").lower().strip()
+        autor = input("Digite o autor do livro: ").lower().strip()
+        ano = int(input("Digite o ano de publicação do livro: ").strip())
+        cadastra_livro(titulo, autor, ano)
+
         cursor.execute("""
         INSERT INTO livros (titulo, autor, ano, disponivel) VALUES (?, ?, ?, ?)
         """, (titulo, autor, ano, "sim"))
@@ -40,10 +46,6 @@ def cadastra_livro(titulo, autor, ano):
         if conexao:
             conexao.close()
 
-titulo = input("Digite o titulo do livro: ").lower().strip()
-autor = input("Digite o autor do livro: ").lower().strip()
-ano = int(input("Digite o ano de publicação do livro: ").strip())
-cadastra_livro(titulo, autor, ano)
 
 
 def lista_livros():
@@ -59,7 +61,6 @@ def lista_livros():
     finally:
         if conexao:
             conexao.close()
-lista_livros()
 
 
 def uptade_disponibilidade():
@@ -85,13 +86,13 @@ def uptade_disponibilidade():
         if conexao:
             conexao.close()
 
-uptade_disponibilidade()
 
-def remove_livro(id_livro):
+def remove_livro():
     try:
         conexao = sqlite3.connect('biblioteca.db')
         cursor = conexao.cursor()
 
+        id_livro = int(input("Digite o ID do livro que deseja remover: "))
         cursor.execute("DELETE FROM livros WHERE id = ?", (id_livro,))
 
         conexao.commit()
@@ -105,5 +106,31 @@ def remove_livro(id_livro):
         if conexao:
             conexao.close()
 
-id_livro = int(input("Digite o ID do livro que deseja remover: "))
-remove_livro(id_livro)
+def menu():
+    try:
+        conexao = sqlite3.connect('biblioteca.db')
+        cursor = conexao.cursor()
+
+        while True:
+            print("\nMenu:")
+            print("1. Cadastrar livro")
+            print("2. Listar livros")
+            print("3. Atualizar disponibilidade")
+            print("4. Remover livro")
+            print("5. Sair")
+            opcao = input ("Escolha uma opção: ")
+            match opcao:
+                case "1": cadastra_livro()
+                case "2": lista_livros()
+                case "3": uptade_disponibilidade()
+                case "4": remove_livro()
+                case "5":
+                    print("Acesso encerrado")
+                    break
+    except sqlite3.Error as error:
+        print("Erro na operação do menu:", error)
+    finally:
+        if conexao:
+            conexao.close()
+
+menu()
